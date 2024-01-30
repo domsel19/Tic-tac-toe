@@ -5,10 +5,10 @@
 class Field {
  private:
   std::vector<std::vector<std::string>> field;
-  int player = 0;
 
  public:
-  int winner = -1;
+  int player = 0;
+  bool win_ = false;
   Field() : field(5, std::vector<std::string>(5, " ")) {
     for (int i = 0; i < 5; i++) {
       for (int j = 0; j < 5; j++) {
@@ -24,17 +24,17 @@ class Field {
     }
   }
   void setcross(int r, int c) {
-    if (r % 2 == 0 && c % 2 == 0 && field[r][c] == " ") {
+    if (r % 2 == 0 && c % 2 == 0) {
       field[r][c] = "X";
       player++;
-      wino();
+      win();
     }
   }
   void setcirc(int r, int c) {
-    if (r % 2 == 0 && c % 2 == 0 && field[r][c] == " ") {
+    if (r % 2 == 0 && c % 2 == 0) {
       field[r][c] = "O";
       player++;
-      winx();
+      win();
     }
   }
   void reset() {
@@ -53,34 +53,19 @@ class Field {
     }
     std::cout << std::endl;
   }
-  void winx() {
-    if (field[0][0] == "X" && field[0][2] == "X" && field[0][4] == "X") {
-      winner = 1;
-    } else if (field[0][0] == "X" && field[2][2] == "X" && field[4][4] == "X") {
-      winner = 1;
-    } else if (field[2][0] == "X" && field[2][2] == "X" && field[2][4] == "X") {
-      winner = 1;
-    } else if (field[4][0] == "X" && field[4][2] == "X" && field[4][4] == "X") {
-      winner = 1;
-    } else if (field[2][0] == "X" && field[2][2] == "X" && field[2][4] == "X") {
-      winner = 1;
-    } else if (field[0][0] == "X" && field[2][0] == "X" && field[4][0] == "X") {
-      winner = 1;
-    }
-  }
-  void wino() {
-    if (field[0][0] == "O" && field[0][2] == "O" && field[0][4] == "O") {
-      winner = 2;
-    } else if (field[0][0] == "O" && field[2][2] == "O" && field[4][4] == "O") {
-      winner = 2;
-    } else if (field[2][0] == "O" && field[2][2] == "O" && field[2][4] == "O") {
-      winner = 2;
-    } else if (field[4][0] == "O" && field[4][2] == "O" && field[4][4] == "O") {
-      winner = 2;
-    } else if (field[2][0] == "O" && field[2][2] == "O" && field[2][4] == "O") {
-      winner = 2;
-    } else if (field[0][0] == "O" && field[2][0] == "O" && field[4][0] == "O") {
-      winner = 2;
+  void win() {
+    if (field[0][0] == field[0][2] && field[0][0] == field[0][4]) {
+      win_ = true;
+    } else if (field[0][0] == field[2][2] && field[0][0] == field[4][4]) {
+      win_ = true;
+    } else if (field[2][0] == field[2][2] && field[2][0] == field[2][4]) {
+      win_ = true;
+    } else if (field[4][0] == field[4][2] && field[4][0] == field[4][4]) {
+      win_ = true;
+    } else if (field[0][0] == field[2][0] && field[0][0] == field[4][0]) {
+      win_ = true;
+    } else {
+      win_ = false;
     }
   }
   void turn(int a, int b) {
@@ -94,13 +79,13 @@ class Field {
 int main() {
   Field gamefield;
   int a, b;
-  while (gamefield.winner == -1) {
+  while (gamefield.win_ == false) {
     gamefield.print();
-    std::cout << "Enter the values of your next choice of field with coma "
+    std::cout << "Enter the values of your next choice of field with space "
                  "seperation: ";
     std::cin >> a >> b;
     gamefield.turn(a, b);
   }
-  printf("The winner is Player: %i \n", gamefield.winner);
+  std::cout << "The winner is Player" << (gamefield.player % 2) + 1 << "!";
   return 0;
 }
