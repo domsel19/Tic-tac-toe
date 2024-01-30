@@ -2,10 +2,11 @@
 #include <string>
 #include <vector>
 
+enum class Symbol { X, O, Empty };
+
 class Field {
  private:
   std::vector<std::vector<std::string>> field;
-  int counter = 0;
 
  public:
   int player = 0;
@@ -29,7 +30,6 @@ class Field {
       field[r][c] = "X";
       player++;
       win();
-      counter++;
     }
   }
   void setcirc(int r, int c) {
@@ -37,7 +37,6 @@ class Field {
       field[r][c] = "O";
       player++;
       win();
-      counter++;
     }
   }
   void reset() {
@@ -56,8 +55,8 @@ class Field {
     }
     std::cout << std::endl;
   }
-  void win() {
-    if (counter > 4) {
+  /*void win() {
+    if (counter > 3) {
       if (field[0][0] == field[0][2] && field[0][0] == field[0][4]) {
         win_ = true;
       } else if (field[0][0] == field[2][2] && field[0][0] == field[4][4]) {
@@ -80,7 +79,8 @@ class Field {
         win_ = false;
       }
     }
-  }
+  }*/
+  bool isWinner() {}
   void turn(int a, int b) {
     if (player % 2 == 0) {
       setcross(a, b);
