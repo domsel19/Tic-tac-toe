@@ -6,99 +6,79 @@ enum class Symbol { X, O, Empty };
 
 class Field {
  private:
-  std::vector<std::vector<std::string>> field;
+  std::vector<std::vector<Symbol>> field;
 
  public:
-  int player = 0;
-  bool win_ = false;
-  Field() : field(5, std::vector<std::string>(5, " ")) {
-    for (int i = 0; i < 5; i++) {
-      for (int j = 0; j < 5; j++) {
-        if (j % 2 == 1 && i % 2 == 1) {
-          field[i][j] = "|------";
-        } else if (j % 2 == 1 && i % 2 == 0) {
-          field[i][j] = "|";
-        }
-        if (i % 2 == 1 && j % 2 == 0) {
-          field[i][j] = "-------";
-        }
-      }
-    }
-  }
-  void setcross(int r, int c) {
-    if (r % 2 == 0 && c % 2 == 0) {
-      field[r][c] = "X";
-      player++;
-      win();
-    }
-  }
-  void setcirc(int r, int c) {
-    if (r % 2 == 0 && c % 2 == 0) {
-      field[r][c] = "O";
-      player++;
-      win();
-    }
-  }
-  void reset() {
-    for (int i = 0; i < 5; i += 2) {
-      for (int j = 0; j < 5; j += 2) {
-        field[i][j] = " ";
-      }
-    }
-  }
-  void print() {
-    for (int i = 0; i < 5; ++i) {
-      for (int j = 0; j < 5; ++j) {
-        std::cout << field[i][j] << "\t";
+  Symbol player;
+  Field() : field(3, std::vector<Symbol>(3, Symbol::Empty)) {}
+
+  void printBoard() {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        char playersymbol = (field[i][j] == Symbol::X)
+                                ? 'X'
+                                : ((field[i][j] == Symbol::O) ? 'O' : ' ');
+        std::cout << playersymbol << "\t";
       }
       std::cout << std::endl;
     }
     std::cout << std::endl;
   }
-  /*void win() {
-    if (counter > 3) {
-      if (field[0][0] == field[0][2] && field[0][0] == field[0][4]) {
-        win_ = true;
-      } else if (field[0][0] == field[2][2] && field[0][0] == field[4][4]) {
-        win_ = true;
-      } else if (field[2][0] == field[2][2] && field[2][0] == field[2][4]) {
-        win_ = true;
-      } else if (field[4][0] == field[4][2] && field[4][0] == field[4][4]) {
-        win_ = true;
-      } else if (field[0][0] == field[2][0] && field[0][0] == field[4][0]) {
-        win_ = true;
-      } else if (field[0][0] == field[0][2] && field[0][0] == field[0][4]) {
-        win_ = true;
-      } else if (field[0][2] == field[2][2] && field[0][2] == field[4][2]) {
-        win_ = true;
-      } else if (field[0][4] == field[2][4] && field[0][4] == field[4][4]) {
-        win_ = true;
-      } else if (field[4][0] == field[2][2] && field[4][0] == field[0][4]) {
-        win_ = true;
-      } else {
-        win_ = false;
+  bool game_over() {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (field[i][j] == Symbol::Empty) {
+          return false;
+        }
       }
     }
-  }*/
-  bool isWinner() {}
-  void turn(int a, int b) {
-    if (player % 2 == 0) {
-      setcross(a, b);
-    } else {
-      setcirc(a, b);
+    return true;
+  }
+  bool winner(Symbol win_player) {
+    for (int i = 0; i < 3; i++) {
+      if (field[i][0] == win_player && field[i][1] == win_player &&
+          field[i][2] == win_player) {
+        return true;
+      }
+    }
+    for (int j = 0; j < 3; j++) {
+      if (field[0][j] == win_player && field[1][j] == win_player &&
+          field[2][j] == win_player) {
+        return true;
+      }
+    }
+    if (field[0][0] == win_player && field[1][1] == win_player &&
+        field[2][2] == win_player) {
+      return true;
+    }
+    if (field[0][2] == win_player && field[1][1] == win_player &&
+        field[2][0] == win_player) {
+      return true;
+    }
+    return false;
+  }
+  void turn(int row, int col, Symbol player) {
+    if (row < 3 && row >= 0 && col >= 0 && col < 3 &&
+        field[row][col] == Symbol::Empty) {
+      field[row][col] = player;
     }
   }
 };
 int main() {
-  Field gamefield;
   int a, b;
-  while (gamefield.win_ == false) {
-    gamefield.print();
-    std::cout << "Enter the values of your next choice of field with space "
-                 "seperation: ";
+  Field gamefield;
+  while (gamefield.game_over() == false) {
+    char gamewinner;
+    gamefield.printBoard();
+    std::cout << "Enter the row and collum you want to take your turn on: ";
     std::cin >> a >> b;
-    gamefield.turn(a, b);
+    gamefield.turn(a, b, gamefield.player);
+    if (gamefield.winner(gamefield.player) == true) {
+      if (gamefield.player == Symbol::X ? gamewinner = 'X' : gamewinner = 'O')
+        std::cout << "The winner is: " << gamewinner << std::endl;
+      break;
+    }
   }
-  std::cout << "The winner is Player" << (gamefield.player % 2) + 1 << "!";
+
   return 0;
 }
