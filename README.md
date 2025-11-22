@@ -1,2 +1,2 @@
 # Tic-tac-toe
- Selfmade Tic-Tac-Toe game
+Tic-Tac-Toe game initially from Chat-GPT but as it wasn't working properly I fixed some issues.
